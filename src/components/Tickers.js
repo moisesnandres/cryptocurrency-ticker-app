@@ -40,6 +40,21 @@ class Tickers extends Component {
     };
   }
 
+  componentDidMount() {
+    this.fetchCryptocurrencyData();
+    this.interval = setInterval(() => this.fetchCryptocurrencyData(), 10 * 1000);
+  }
+
+  fetchCryptocurrencyData() {
+    axios.get("https://api.coinmarketcap.com/v1/ticker/?limit=5")
+      .then(response => {
+        const wanted = ["bitcoin", "ethereum", "litecoin"];
+        const result = response.data.filter(currency => wanted.includes(currency.id));
+        this.setState({ data: result });
+      })
+      .catch(err => console.log(err));
+  }
+
   render() {
     const tickers = this.state.data.map((currency) =>
       <Cryptocurrency data={currency} key={currency.id} />
